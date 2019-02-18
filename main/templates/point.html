@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif; margin-bottom:50px;font-size: 10px">
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-2">
+            <div class="row" style="border:1px solid;border-radius: 5px">
+            <h5 style="margin-left:10px">Total Tablets: {{ tablets.count }}</h5>
+            </div>
+            <div class="row" style="border:1px solid;border-radius: 5px">
+                <h5 style="margin-left:10px">To be received: {{ tablets_tobe_received.count }}</h5>
+            </div>
+            <div class="row" style="border:1px solid;border-radius: 5px">
+                <h5 style="margin-left:10px">Free Tablets: {{ free_tablets.count }}</h5>
+            </div>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4 text-center">
+        <h3 style="margin:auto;text-decoration: underline;font-weight: bold">{{ request.user.username|title }}</h3>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-2">
+            <a href="{% url 'main:tobe' %}">
+            <button class="btn btn-info">Tablets to be received</button>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <input type="hidden" name="" id="available" value="{{ ct }}">
+        <input type="hidden" name="" id="free" value="{{ data.count }}">
+    </div>
+
+    <table class="table table-bordered" id="table" style="margin-top:30px; margin-bottom: 50px">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col" class="text-center">IMEI</th>
+            <th scope="col" class="text-center">Brand</th>
+            <th scope="col" class="text-center">Tablet ID</th>
+            <th scope="col" class="text-center">Allotted to</th>
+            <th scope="col" class="text-center">Project</th>
+            <th scope="col" class="text-center">Start Date</th>
+            <th scope="col" class="text-center">Complition Date</th>
+            <th scope="col" class="text-center">Condition</th>
+            <th scope="col" class="text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for d in tablets %}
+        {% if d.received == True %}
+          <tr>
+            <th scope="row" class="text-center">{{ d.imei }}</th>
+            <th scope="row" class="text-center">{{ d.brand }}</th>
+            <td class="text-center">
+                {{ d.tab_id }}
+            </td>
+            <td class="text-center">
+                {% if d.allotted_to == None %}
+                
+                {% else %}
+                {{ d.allotted_to }}
+                {% endif %}
+            </td>
+            <td class="text-center">
+                    {% if d.project == None %}
+                
+                {% else %}
+                {{ d.project }}
+                {% endif %}
+            </td>
+            <td class="text-center">{% if d.start_date == None %}
+                
+                    {% else %}
+                    {{ d.start_date }}
+                    {% endif %}
+                </td>
+
+            <td class="text-center">{% if d.end_date == None %}
+                
+                {% else %}
+                {{ d.end_date }}
+                {% endif %}
+            </td>
+            <td>
+                <div class="row">
+                    <div class="col-sm-6 text-center">
+                    {% if d.damaged == False %}
+                    <i class="fas fa-check-circle" style="color:green;font-size: 15px"></i>
+                    </a>
+                    {% else %}
+                    <i class="fas fa-times-circle" style="color:red;font-size: 15px"></i>
+                    {% endif %}
+                </div>
+                <div class="col-sm-6 text-center">
+                        {% if d.damaged == False %}
+                        
+                        <button class="btn btn-danger" style="font-size:10px" data-toggle="modal" data-target="#exampleModal">Mark</button>
+                    
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Marking Tablet Damaged</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                {% with tid=d.id %}
+                                <form action="{% url 'main:mark_damaged' tid %}" method="POST">
+                                {% endwith %}
+                                {% csrf_token %}
+                                    <div class="row">
+                                        <input type="text" name="remark" class="form-control" placeholder="Remark">
+                                    </div>
+                                    <div class="row" style="margin-top:10px">
+                                        <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
+                                        <input type="submit" class="btn btn-success" value="Submit" style="margin-left:10px">
+                                    </div>
+                                    
+                                </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                </div>
+                </div>
+    
+                </td>
+            <td class="text-center">
+                {% if d.allotted == True%}
+                {% with tid=d.id %}
+                <a href="{% url 'main:mark_complete' tid %}">
+                {% endwith %}
+                <button  style="font-size:10px" {% if d.damaged == True %} disabled {% endif %} class="btn btn-info">Mark Complete</button>
+        
+                {% endif %}
+            </td>
+
+
+          </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% for d in free_tablets %}
+    <div class="row">
+        <input type="hidden" id="i{{ d.id }}" value="{{ d.imei }}">
+        <input type="hidden" id="ti{{ d.id }}" value="{{ d.tab_id }}">
+    </div>
+    {% endfor %}
+
+    {% for message in messages %}
+    <div class="row">
+        <h4 style="color:red; margin-top:20px;margin-left: 15px">{{ message }}</h4>
+    </div>
+{% endfor %}
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+        <h3 style="text-decoration:underline">Tablet Distribution</h3>
+    </div>
+    </div>
+    <div class="row text-center label-info" style="color:royalblue;margin-bottom:0px
+    ;color: white;margin-left:0px;margin-right: 0px;font-weight: bold">
+            <!-- <div class="col-sm-2">
+                <label>Allottment</label>
+            </div> -->
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">IMEI Number</label>
+            </div>
+            <div class="col-sm-1" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">ID</label>
+            </div>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Allotted to</label>
+            </div>
+            <div class="col-sm-1" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Project</label>
+            </div>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Start Date</label>
+            </div>
+            <div class="col-sm-2" style="background: rgb(29, 29, 29)">
+                <label style="padding:5px">Complition Date</label>
+            </div>
+        </div>
+
+    <form id="myform" action="{% url 'main:allot_from_center' %}" method="POST" style="margin-top:20px">
+        {% csrf_token %}
+    <div class="row" id="r1" style="margin-top:10px">
+        {% for d in free_tablets|slice:"1" %}
+        <input type="text" hidden name="tablet_id" id="tablet_id" value="{{ d.id }}">
+        {% endfor %}
+        <div class="col-sm-2">
+            <fieldset>
+                <select name="im0" id="im0" class="form-control" style="width:100%;border:1px solid">
+                {% for d in free_tablets %}
+                    <option value = "{{ d.imei }}" id="imei{{ d.id }}" onclick="addimei('{{ d.id }}')">{{ d.imei }}</option>
+                {% endfor %}
+                </select>
+          </fieldset>
+        </div>
+        <div class="col-sm-1">
+            <fieldset id="testfield">
+                <select name="tid0" id="tid0" class="form-control" style="width:140%;border:1px solid">
+                {% for d in free_tablets %}
+                    <option value = "{{ d.tab_id }}" id="tab{{ d.id }}" onclick="addimei('{{ d.id }}')">{{ d.tab_id }}</option>  
+                {% endfor %}
+                </select>
+          </fieldset>
+        </div>
+        <div class="col-sm-2">
+            <input type="text" name="allot0" id="allot0" placeholder="Allotted to" class="form-control" style="width:100%;border:1px solid", value="">
+        </div>
+        <div class="col-sm-1">
+            <input type="text" name="project0" id="project0" placeholder="Project" class="form-control" style="width:120%; border:1px solid", value="">
+        </div>
+        <div class="col-sm-2">
+            <input type="date" name="s_date0" id="s_date0" class="form-control" style="width:100%;border:1px solid">
+        </div>
+        <div class="col-sm-2">
+            <input type="date" name="e_date0" id="datee" class="form-control" style="width:100%;border:1px solid">
+        </div>
+        <div class="col-sm-1">
+            <input type="submit" id="sub" class="form-control btn btn-info" value="Submit" style="width:100%;border:1px solid;float:center;">
+        </div>
+        <div class="col-sm-0">
+            <input type="hidden" name="count" id="countid" value="1">
+        </div>
+    </div>
+    </form>
+    <!-- <button onclick="addel();checkavailable();addimei();test()" id="add" class="btn btn-success" style="margin-top:20px">Add Tablet</button> -->
+    </div>
+
+    
+</div>
+
+<script>
+    function dateset(){
+    var myDate = document.getElementById('s_date0');
+    var today = new Date();
+    myDate.value = today.toISOString().substr(0, 10);
+
+    }
+    window.onload=dateset();
+
+    function checkbutton(){
+        var but=document.getElementById('sub');
+        var cc=but.childElementCount;
+        
+        if(cc == 0){
+            but.disabled=true;
+        }
+    }
+
+</script>
+
+<script>
+function addimei(tab_id){
+    imeiid="i"+tab_id;
+    imei=document.getElementById(imeiid).value;
+
+    tabid="ti"+tab_id;
+    tab=document.getElementById(tabid).value;
+
+    drop_imei=document.getElementById("im0");
+    drop_tab=document.getElementById("tid0");
+
+    drop_imei.value=imei;
+    drop_tab.value=tab;
+    myid = document.getElementById("tablet_id");
+    myid.value=tab_id;
+}
+
+</script>
+{% endblock %}
+

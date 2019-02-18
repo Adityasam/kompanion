@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% block content %}
+
+<head>
+        <title>HTML Meta Tag</title>
+        <meta http-equiv = "refresh" content = "1; url = {% url 'main:detail' center_id %}" />
+     </head>
+
+<div class="container">
+    <div class="row">
+        <h3>Data added successfully</h3>
+    </div>
+</div>
+
+{% endblock %}

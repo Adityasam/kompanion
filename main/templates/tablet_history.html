@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% load appfilters %}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif; margin-bottom:50px;font-size: 15px">
+
+<div class="row" style="margin-top:20px">
+    <div class="col-sm-12">
+        <h3 style="font-weight:bold">IMEI: {{ tablet.imei }}</h3>
+        <h4>Brand: {{ tablet.brand }}</h4>
+        <h4>Tablet ID: {{ tablet.tab_id }}</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <h3 style="font-weight:bold">Centers</h3>
+    </div>
+</div>
+
+<table class="table table-bordered" id="table" style="margin-top:10px; margin-bottom: 50px">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Center</th>
+            <th scope="col">Allotment Date</th>
+            <th scope="col">Receive Date</th>
+            <th scope="col">Transfer Date</th>
+            <th scope="col">Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if tablet.previous_centers != None %}
+        {% for t in tablet.previous_centers|tablet_history %}
+          <tr>
+            <th scope="row">{{ t.0|get_name|title }}</th>
+            <td scope="row">{{ t.1 }}</td>
+            <td>
+                {{ t.2 }}
+            </td>
+            <td>
+                {% if t.3 != "D" %}                        
+                    {{ t.3 }}
+                {% endif %}
+            </td>
+            <td>
+                {% if t.3 == "D" %}
+                <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.5 }}" style="color:red;font-size: 15px"></i>
+                ({{ t.4 }})
+                {% else %}
+                <i class="fas fa-check-circle" data-toggle="tooltip" title="Condition okay" style="color:green;font-size: 15px"></i>        
+                {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+
+<div class="row">
+        <div class="col-sm-12 text-center">
+            <h3 style="font-weight:bold">Allotments</h3>
+        </div>
+    </div>
+        <table class="table table-bordered" id="table" style="margin-top:10px; margin-bottom: 50px">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Center</th>
+                    <th scope="col">Allotted to</th>
+                    <th scope="col">Project</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">Complition Date</th>
+                    <th scope="col">Condition</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% if tablet.previous_allotment != None and tablet.previous_allotment != '' %}
+                {% for t in tablet.previous_allotment|tablet_history %}
+                  <tr>
+                    <th scope="row">{{ t.0|get_name|title }}</th>
+                    <td scope="row">{{ t.1 }}</td>
+                    <td>
+                        {{ t.2 }}
+                    </td>
+                    <td>                        
+                        {{ t.3}}
+                    </td>
+                    <td>
+                        {{ t.4 }}
+                    </td>
+                    <td>
+                        {% if t.5 == "ND" %}
+                        <i class="fas fa-check-circle" data-toggle="tooltip" title="Condition okay" style="color:green;font-size: 15px"></i>
+                        {% else %}
+                        <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.7 }}" style="color:red;font-size: 15px"></i>        
+                        {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  {% endif %}
+                </tbody>
+              </table>
+</div>
+
+{% endblock %}

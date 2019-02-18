@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif">
+
+    <div class="row" style="margin-top:10px;margin-bottom: 40px">
+        <div class="col-sm-4">
+            <div class="row">
+        <h5>Total Tablets Allotted: {{ allotted_tab.count }}</h5>
+        </div>
+        <div class="row">
+            <h5>To be received: {{ tobe_received_tab.count }}</h5>
+        </div>
+        </div>
+        <div class="col-sm-4 text-center">
+        <h2 style="text-decoration:underline;font-weight: bold">
+            {{ center_name.username|title }}
+        </h2>
+        </div>
+    
+        <div class="col-sm-4 text-right">
+            <a href="{% url 'main:center_detail' center_id  %}">
+            <button class="btn btn-success">Show Details</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- <div class="row">
+        {% for d in dat %}
+            {{ d.imei }}
+        {% endfor %}
+    </div> -->
+    {% for message in messages %}
+        <div class="row">
+            <h4 style="color:red; margin-top:20px;margin-left: 15px">{{ message }}</h4>
+        </div>
+    {% endfor %}
+
+    <div class="row text-center label-info" style="color:royalblue;margin-bottom:0px
+    ;color: white;margin-left:0px;margin-right: 0px;font-weight: bold">
+            <!-- <div class="col-sm-2">
+                <label>Allottment</label>
+            </div> -->
+            <div class="col-sm-3" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">IMEI Number</label>
+            </div>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Brand</label>
+            </div>
+            <div class="col-sm-3" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Tablet ID</label>
+            </div>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Date</label>
+            </div>
+        </div>
+
+        <form id="myform" action="{% url 'main:allot_center' %}" method="POST" style="margin-top:0px">
+                {% csrf_token %}
+            <div class="row" id="r1" style="margin-top:10px">
+                <!-- <div class="col-sm-2">
+                    <input type="text" class="form-control" name="allotment" id="allot" placeholder="Allottment">
+                </div> -->
+                <div class="col-sm-3">
+                    <input type="text" name="im1" placeholder="IMEI Number" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" name="brand1" placeholder="Brand" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" name="tid1" placeholder="Tablet ID" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="date" id="dat" name="date" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input type="submit" class="form-control btn btn-info" value="Submit">
+                </div>
+                <div class="col-sm-2">
+                    <input type="hidden" name="count" id="countid" value="1">
+                    <input type="hidden" name="center_id" value="{{ center_name.id }}">
+                </div>
+            </div>
+            </form>
+        <button onclick="addel()" class="btn btn-success" style="margin-top:20px">Add Tablet</button>
+</div>
+
+<script>
+
+function addel(){
+var clickco=document.getElementById("countid").value;
+var clickcount=Number(clickco)+1;
+var c=document.getElementById("countid");
+c.value=clickcount;
+
+var x=document.createElement("div");
+x.setAttribute("class", "row");
+x.style.marginTop="10px";
+
+var imc=document.createElement("div");
+imc.setAttribute("class", "col-sm-3");
+
+var im=document.createElement("INPUT");
+im.setAttribute("type", "text");
+im.setAttribute("class", "form-control");
+im.setAttribute("placeholder", "IMEI Number");
+im.style.width="100%";
+imname="im"+clickcount.toString();
+im.setAttribute("name", imname);
+
+var brc=document.createElement("div");
+brc.setAttribute("class", "col-sm-2");
+
+var br=document.createElement("INPUT");
+br.setAttribute("type", "text");
+br.setAttribute("class", "form-control");
+br.setAttribute("placeholder", "Brand");
+br.style.width="100%";
+brname="brand"+clickcount.toString();
+br.setAttribute("name", brname);
+
+var idc=document.createElement("div");
+idc.setAttribute("class", "col-sm-3");
+
+var id=document.createElement("INPUT");
+id.setAttribute("type", "text");
+id.setAttribute("class", "form-control");
+id.setAttribute("placeholder", "Tablet ID");
+id.style.width="100%";
+idname="tid"+clickcount.toString();
+id.setAttribute("name", idname);
+
+imc.appendChild(im);
+brc.appendChild(br);
+idc.appendChild(id);
+
+x.appendChild(imc);
+x.appendChild(brc);
+x.appendChild(idc);
+document.getElementById("myform").appendChild(x);
+
+}
+</script>
+
+<script>
+function dateset(){
+var myDate = document.getElementById('dat');
+var today = new Date();
+myDate.value = today.toISOString().substr(0, 10);
+}
+window.onload=dateset();
+</script>
+{% endblock %}
+

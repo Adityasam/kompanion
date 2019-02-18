@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif">
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12 text-center">
+        <h3 style="text-decoration:underline;font-weight:bold">{{ request.user.username|title }}</h3>
+        </div>
+    </div>
+
+    {% if tablets.count == 0 %}
+    <div class="row" style=" margin-top:50px">
+        <div class="col-sm-12 text-center">
+    <h4>No tablets to be received </h4>
+    </div>
+    </div>
+    {% else %}
+            <table class="table table-bordered" id="table" style="margin-top:30px">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">IMEI</th>
+                        <th scope="col">Tablet_id</th>
+                        <th scope="col">Date Allotted</th>
+                        <th scope="col">Mark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for d in tablets %}
+                      <tr>
+                    
+                        <th scope="row">{{ d.imei }}</th>
+                        <td>
+                            {{ d.tab_id }}
+                        </td>
+                        <td>{{ d.allotted_date }}</td>
+                        <td>
+                            {% with tid=d.id %}
+                            <a href="{% url 'main:mark_received' tid %}">
+                            {% endwith %}
+                            <button class="btn btn-info">Mark Received</button>
+                            </a>
+                        </td>
+                        
+                      </tr>
+                      
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  {% endif %}
+</div>
+{% endblock %}

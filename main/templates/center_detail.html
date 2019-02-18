@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% load appfilters %}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif">
+
+    {% for message in messages %}
+        <div class="row">
+            <h4 style="color:red; margin-top:20px">{{ message }}</h4>
+        </div>
+    {% endfor %}
+<div class="row" style="margin-top:20px">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8 text-center">
+        <h3 style="text-decoration:underline;font-weight: bold">{{ center_name.username|title }}</h3>
+    </div>
+    <div class="col-sm-2">
+    
+    </div>
+</div>
+
+
+    <table class="table table-bordered" id="table" style="margin-top:30px">
+            <thead class="thead-dark">
+              <tr style="font-size:10px">
+                <th scope="col" class="text-center">Edit</th>
+                <th scope="col" class="text-center">History</th>
+                <th scope="col" class="text-center">IMEI</th>
+                <th scope="col" class="text-center">Brand</th>
+                <th scope="col" class="text-center">Tablet_id</th>
+                <th scope="col" class="text-center">Received</th>
+                <th scope="col" class="text-center">Allotted to</th>
+                <th scope="col" class="text-center">Project</th>
+                <th scope="col" class="text-center">Start Date</th>
+                <th scope="col" class="text-center">Completion Date</th>
+                <th scope="col" class="text-center">Condition</th>
+                <th scope="col" class="text-center">Status</th>
+                <th scope="col" class="text-center">Transfer</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for d in database %}
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Marking Tablet Damaged</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                        {% with tid=d.id %}
+                        <form action="{% url 'main:update_tablet' tid %}" method="POST">
+                        {% endwith %}
+                        {% csrf_token %}
+                            <div class="row" style="font-weight:bold">
+                                <div class="col-sm-5 text-center">
+                                    IMEI
+                                </div>
+
+                                <div class="col-sm-4 text-center">
+                                    Tablet ID
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <input type="text" name="imei" class="form-control" placeholder="imei" value="{{ d.imei }}">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="tablet_id" class="form-control" placeholder="imei" value="{{ d.tab_id }}">
+                                    <input type="text" hidden name="cid" value="{{ center_name.id }}">
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px">
+                                <div class="col-sm-2">
+                                    <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
+                                </div>
+                                <div class="col-sm-7">
+                                    <input type="submit" class="btn btn-success" value="Submit" style="margin-left:10px">
+                                </div>
+                                
+                            </div>
+                            
+                        </form>
+                        </div>
+                        <div class="modal-footer">
+                            {% with tid=d.id cid=center_name.id %}
+                                <a href="{% url 'main:delete_tab' tid cid %}">
+                            {% endwith %}
+                                <button type="button" class="btn btn-danger">Delete</button>
+                                </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+        
+              <tr style="font-size:10px">
+                <td>
+                    <input type="button" style="font-size:10px" class="btn btn-info" value="Edit" id="{{ d.id }}"
+                        onclick="edit_save_name('{{ d.id }}')" data-toggle="modal" data-target="#exampleModal">
+                </td>
+                <td class="text-center" scope="row">
+                    {% with tid=d.id %}
+                    <a href="{% url 'main:tablet_history' tid %}">
+                    {% endwith %}
+                    <button class="btn btn-secondary" style="font-size:10px">History</button>
+                    </a>
+                </td>
+                <th class="text-center" scope="row">{{ d.imei }}</th>
+                <td class="text-center">
+                    {{ d.brand }}
+                </td>
+                <td class="text-center">
+                    {{ d.tab_id }}
+                </td>
+                <td class="text-center">
+                    {% if d.received == True %}
+                    <i class="fas fa-check-circle" data-toggle="tooltip" title="Received" style="color:green;font-size: 15px"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle" data-toggle="tooltip" title="Not received yet" style="color:red;font-size: 15px"></i>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if d.allotted_to != None %}
+                    {{ d.allotted_to }}
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if d.project != None %}
+                    {{ d.project }}
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if d.allotted_to != None %}
+                    {{ d.start_date}}
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if d.allotted_to != None %}
+                    {{ d.end_date }}
+                    {% endif %}
+                </td>
+                {% if d.damaged == False %}
+                <td class="text-center" >
+                    <i class="fas fa-check-circle"  style="color:green;font-size: 15px"></i>
+                </td>
+                {% else %}
+                <td class="text-center" >
+                    {% if d.allotted_to != None %}
+                    <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ d.previous_allotment|splitdamage }}" style="color:red;font-size: 15px"></i>
+                    {% else %}
+                    <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ d.previous_centers|splitdamage }}" style="color:red;font-size: 15px"></i>
+                    {% endif %}
+                </td>
+                {%endif  %}
+                <td>
+                    {% if d.allotted == False %}
+                    Free
+                    {% else %}
+                    Engaged
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% with tid=d.id center_id=center_name.id %}
+                    <a href="{% url 'main:tablet_transfer' tid center_id %}">
+                    {% endwith %}
+                    <input type="button" style="font-size:10px" class="btn btn-info" {% if d.allotted == True %} disabled {% endif %} value="Transfer">
+                    </a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+    </div>
+</div>
+
+<script>
+    function edit_save_name(id){
+        var btnname = document.getElementById(id);
+        var imname = "imei"+id;
+        var tabname = "tab"+id;
+        
+        var imfield = document.getElementById(imname);
+        var tabfield = document.getElementById(tabname);
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" style="color:red">
+{% if messages %}
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+{% endif %}
+</div>
+
+<div class="container-fluid" style="font-family:Georgia, 'Times New Roman', Times, serif;margin-top: 30px">
+        <table class="table table-bordered" id="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Center Name</th>
+                    <th scope="col">Allotted</th>
+                    <!-- <th scope="col">Date</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                {% for c in centers_name %}
+                {% if c.is_superuser %}
+                {% else %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>
+                        <a href="{{ c.get_absolute_url }}">
+                            <h5>{{ c.name|title }}</h5>
+                            <!-- <h5>{{ c.id }}</h5> -->
+                        </a>
+                    </td>
+                    <td>{{ c.allotted}}</td>
+                    <!-- <td>{{ c.date }}</td> -->
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+                </tbody>
+              </table>
+</div>
+
+
+{% endblock %}
