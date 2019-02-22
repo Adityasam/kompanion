@@ -1,8 +1,11 @@
 {% load static %}
 <div class="container-fluid">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <form>
+      <i class="fa fa-arrow-left" aria-hidden="true" style="color:white; font-size: 30px; margin-right: 30px" onclick="history.back()"></i>
+    </form>
     <a class="navbar-brand" href="{% url 'main:original_home' %}">
-        <img src="https://static1.squarespace.com/static/58217edf893fc002c496bf14/5872fd5ae58c62c2b15c67cd/5872fd5bd2b8570ebec0bae7/1483930972694/Kadence+Logo+-+Dark+Grey+%28smaller+size%29.png" alt="kadence"
+        <img src="{% static 'img/logo.png' %}" alt="kadence"
         style="width:100px">
     </a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -17,5 +20,17 @@
         {% endif %}
       </ul>
     </div>
+    <form>
+        <i class="fa fa-arrow-right" id="btnfd" onclick="history.forward()" aria-hidden="true" style="color:white; font-size: 30px; margin-right: 0px" onclick="backbutton()"></i>
+      </form>
   </nav>
   </div>
+
+  <script>
+  function backbutton(){
+      if(history.forward() == undefined){
+        document.getElementById(btnfd).style.display = "none";
+      }
+  }
+  window.onload=backbutton();
+  </script>

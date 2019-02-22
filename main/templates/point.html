@@ -7,13 +7,16 @@
     <div class="row" style="margin-top:20px">
         <div class="col-sm-2">
             <div class="row" style="border:1px solid;border-radius: 5px">
-            <h5 style="margin-left:10px">Total Tablets: {{ tablets.count }}</h5>
+            <h5 style="margin-left:10px;font-weight: bold">Total Tablets: {{ tablets.count }}</h5>
             </div>
             <div class="row" style="border:1px solid;border-radius: 5px">
                 <h5 style="margin-left:10px">To be received: {{ tablets_tobe_received.count }}</h5>
             </div>
             <div class="row" style="border:1px solid;border-radius: 5px">
                 <h5 style="margin-left:10px">Free Tablets: {{ free_tablets.count }}</h5>
+            </div>
+            <div class="row" style="border:1px solid;border-radius: 5px">
+                <h5 style="margin-left:10px">Damaged Tablets: {{ damaged.count }}</h5>
             </div>
         </div>
         <div class="col-sm-2"></div>
@@ -84,18 +87,78 @@
             </td>
             <td>
                 <div class="row">
-                    <div class="col-sm-6 text-center">
+                    <div class="col-sm-12 text-center">
                     {% if d.damaged == False %}
+                    <span data-toggle="modal" data-target="#exampleModal1">
                     <i class="fas fa-check-circle" style="color:green;font-size: 15px"></i>
+                    </span>
+                    <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content" >
+                                <div class="modal-header">
+                                  <h5 style="margin-left:10px" class="modal-title" id="exampleModalLabel">Marking Tablet Damaged</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                {% with tid=d.id %}
+                                <form action="{% url 'main:mark_damaged' tid %}" method="POST" style="margin-left:10px;margin-right: 10px">
+                                {% endwith %}
+                                {% csrf_token %}
+                                    <div class="row">
+                                        <input type="text" name="remark" class="form-control" placeholder="Remark">
+                                    </div>
+                                    <div class="row" style="margin-top:10px">
+                                        <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
+                                        <input type="submit" class="btn btn-success" value="Submit" style="margin-left:10px">
+                                    </div>
+                                    
+                                </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     </a>
+                    {% else %}
+                    {% if d.under_maintenance == True %}
+                    <span data-toggle="modal" data-target="#exampleModal2">
+                    <i class="fas fa-tools" style="font-size:15px; color:blue" data-toggle="tootltip" title="Under Maintenance"></i>
+                    </span>
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content" >
+                                <div class="modal-header">
+                                  <h5 style="margin-left:10px" class="modal-title" id="exampleModalLabel">Marking Tablet Repaired</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                <div class="row" style="margin:10px">
+                                    <h6>Do you want to mark this tablet repaired?</h6>
+                                </div>
+                                <div class="row" style="margin:10px">
+                                    <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
+                                    {% with tid=d.id %}
+                                    <a href="{% url 'main:repaired' tid %}">
+                                    {% endwith %}
+                                    <input type="button" class="btn btn-success" value="Mark Repaired" style="margin-left:10px">
+                                    </a>
+                                </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     {% else %}
                     <i class="fas fa-times-circle" style="color:red;font-size: 15px"></i>
                     {% endif %}
+                    {% endif %}
                 </div>
-                <div class="col-sm-6 text-center">
+                <div class="col-sm-0 text-center">
                         {% if d.damaged == False %}
                         
-                        <button class="btn btn-danger" style="font-size:10px" data-toggle="modal" data-target="#exampleModal">Mark</button>
+                        <button hidden class="btn btn-danger" style="font-size:15px" data-toggle="modal" data-target="#exampleModal">Mark</button>
                     
 
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -184,6 +247,9 @@
             <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
                 <label style="padding:5px">Start Date</label>
             </div>
+            <div class="col-sm-1" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Start Time</label>
+            </div>
             <div class="col-sm-2" style="background: rgb(29, 29, 29)">
                 <label style="padding:5px">Complition Date</label>
             </div>
@@ -197,7 +263,7 @@
         {% endfor %}
         <div class="col-sm-2">
             <fieldset>
-                <select name="im0" id="im0" class="form-control" style="width:100%;border:1px solid">
+                <select name="im0" id="im0" class="form-control" style="border:1px solid; font-size: 12px">
                 {% for d in free_tablets %}
                     <option value = "{{ d.imei }}" id="imei{{ d.id }}" onclick="addimei('{{ d.id }}')">{{ d.imei }}</option>
                 {% endfor %}
@@ -206,7 +272,7 @@
         </div>
         <div class="col-sm-1">
             <fieldset id="testfield">
-                <select name="tid0" id="tid0" class="form-control" style="width:140%;border:1px solid">
+                <select name="tid0" id="tid0" class="form-control" style="border:1px solid;font-size: 12px">
                 {% for d in free_tablets %}
                     <option value = "{{ d.tab_id }}" id="tab{{ d.id }}" onclick="addimei('{{ d.id }}')">{{ d.tab_id }}</option>  
                 {% endfor %}
@@ -214,19 +280,22 @@
           </fieldset>
         </div>
         <div class="col-sm-2">
-            <input type="text" name="allot0" id="allot0" placeholder="Allotted to" class="form-control" style="width:100%;border:1px solid", value="">
+            <input type="text" name="allot0" id="allot0" placeholder="Allotted to" class="form-control" style="border:1px solid; font-size: 12px", value="">
         </div>
         <div class="col-sm-1">
-            <input type="text" name="project0" id="project0" placeholder="Project" class="form-control" style="width:120%; border:1px solid", value="">
+            <input type="text" name="project0" id="project0" placeholder="Project" class="form-control" style="border:1px solid; font-size: 12px", value="">
         </div>
         <div class="col-sm-2">
-            <input type="date" name="s_date0" id="s_date0" class="form-control" style="width:100%;border:1px solid">
-        </div>
-        <div class="col-sm-2">
-            <input type="date" name="e_date0" id="datee" class="form-control" style="width:100%;border:1px solid">
+            <input type="date" name="s_date0" id="s_date0" class="form-control" style="border:1px solid; font-size: 12px">
         </div>
         <div class="col-sm-1">
-            <input type="submit" id="sub" class="form-control btn btn-info" value="Submit" style="width:100%;border:1px solid;float:center;">
+            <input type="text" name="time" id="time-input" class="form-control" style="border:1px solid; font-size: 12px">
+        </div>
+        <div class="col-sm-2">
+            <input type="date" name="e_date0" id="datee" class="form-control" style="border:1px solid; font-size: 12px">
+        </div>
+        <div class="col-sm-1">
+            <input type="submit" id="sub" class="form-control btn btn-info" value="Submit" style="border:1px solid;float:center;font-size: 12px">
         </div>
         <div class="col-sm-0">
             <input type="hidden" name="count" id="countid" value="1">
@@ -244,6 +313,40 @@
     var myDate = document.getElementById('s_date0');
     var today = new Date();
     myDate.value = today.toISOString().substr(0, 10);
+
+        var mytime=document.getElementById('time-input');
+var hours=today.getHours();
+var minutes=today.getMinutes();
+
+var min="";
+var h="";
+var ampm="";
+
+if(hours > 12){
+    h=hours - 12;
+    ampm="PM";
+}
+else{
+    h=hours;
+    ampm="AM";
+}
+
+var hh=""
+if(h < 10){
+    hh="0"+h;
+}
+else{
+    hh=h;
+}
+if(minutes < 10){
+    min="0"+minutes;
+}
+else{
+    min=minutes;
+}
+var tim=hh+":"+min+ampm;
+
+mytime.value=tim;
 
     }
     window.onload=dateset();
@@ -277,5 +380,6 @@ function addimei(tab_id){
 }
 
 </script>
+
 {% endblock %}
 

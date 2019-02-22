@@ -4,12 +4,25 @@
 
 <div class="container">
     <div class="row" style="margin-top:5vw">
-        <div class="col-sm-12">
+        <div class="col-sm-6 text-center" style="border-right:2px solid">
+            <h4 style="font-weight:bold;margin-bottom: 30px">Kadence</h4>
             <a href="{% url 'main:login' %}">
-                <button class="btn btn-success" style="margin: auto;display:block">User Login</button><br/>
+                <button class="btn btn-success btn-block" style="width:50%;;margin: auto;display:block">
+                    User Login
+                </button><br/>
             </a>
             <a href="{% url 'main:login' %}">    
-                <button class="btn btn-success" style="margin: auto;display:block">Admin Login</button>
+                <button class="btn btn-success btn-block" style="width:50%;margin: auto;display:block">Admin Login</button>
+            </a>
+        </div>
+
+        <div class="col-sm-6 text-center">
+            <h4 style="font-weight:bold;margin-bottom: 30px">Kadence</h4>
+            <a href="{% url 'main:login' %}">
+                <button class="btn btn-success btn-block" style="width:50%;;margin: auto;display:block">User Login</button><br/>
+            </a>
+            <a href="{% url 'main:login' %}">    
+                <button class="btn btn-success btn-block" style="width:50%;margin: auto;display:block">Admin Login</button>
             </a>
         </div>
     </div>

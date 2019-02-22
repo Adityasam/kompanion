@@ -34,19 +34,21 @@
         {% for t in tablet.previous_centers|tablet_history %}
           <tr>
             <th scope="row">{{ t.0|get_name|title }}</th>
-            <td scope="row">{{ t.1 }}</td>
+            <td scope="row">{{ t.1 }} / {{ t.2}}</td>
             <td>
-                {{ t.2 }}
-            </td>
-            <td>
-                {% if t.3 != "D" %}                        
-                    {{ t.3 }}
+                {% if t.3 != "" %}
+                {{ t.3 }} / {{ t.4 }}
                 {% endif %}
             </td>
             <td>
-                {% if t.3 == "D" %}
-                <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.5 }}" style="color:red;font-size: 15px"></i>
-                ({{ t.4 }})
+                {% if t.5 != "D" and t.5 != "" %}                        
+                    {{ t.5 }} / {{ t.6 }}
+                {% endif %}
+            </td>
+            <td>
+                {% if t.5 == "D" %}
+                <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.7 }}" style="color:red;font-size: 15px"></i>
+                / {{ t.6 }}
                 {% else %}
                 <i class="fas fa-check-circle" data-toggle="tooltip" title="Condition okay" style="color:green;font-size: 15px"></i>        
                 {% endif %}
@@ -83,16 +85,16 @@
                         {{ t.2 }}
                     </td>
                     <td>                        
-                        {{ t.3}}
+                        {{ t.3}} / ({{ t.4 }})
                     </td>
                     <td>
-                        {{ t.4 }}
+                        {{ t.5 }}
                     </td>
                     <td>
-                        {% if t.5 == "ND" %}
+                        {% if t.6 == "ND" %}
                         <i class="fas fa-check-circle" data-toggle="tooltip" title="Condition okay" style="color:green;font-size: 15px"></i>
                         {% else %}
-                        <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.7 }}" style="color:red;font-size: 15px"></i>        
+                        <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ t.8 }}" style="color:red;font-size: 15px"></i>        
                         {% endif %}
                     </td>
                   </tr>

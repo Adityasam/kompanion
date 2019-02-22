@@ -42,11 +42,11 @@
             <tbody>
             {% for d in database %}
 
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal{{ d.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Marking Tablet Damaged</h5>
+                          <h5 class="modal-title" id="exampleModalLabel">Editing Tablet Details</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -57,8 +57,12 @@
                         {% endwith %}
                         {% csrf_token %}
                             <div class="row" style="font-weight:bold">
-                                <div class="col-sm-5 text-center">
+                                <div class="col-sm-4 text-center">
                                     IMEI
+                                </div>
+
+                                <div class="col-sm-4 text-center">
+                                    Brand
                                 </div>
 
                                 <div class="col-sm-4 text-center">
@@ -66,9 +70,12 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-sm-5">
+                                <div class="col-sm-4">
                                     <input type="text" name="imei" class="form-control" placeholder="imei" value="{{ d.imei }}">
                                 </div>
+                                <div class="col-sm-4">
+                                        <input type="text" name="brand" class="form-control" placeholder="Brand" value="{{ d.brand }}">
+                                    </div>
                                 <div class="col-sm-4">
                                     <input type="text" name="tablet_id" class="form-control" placeholder="imei" value="{{ d.tab_id }}">
                                     <input type="text" hidden name="cid" value="{{ center_name.id }}">
@@ -100,7 +107,7 @@
               <tr style="font-size:10px">
                 <td>
                     <input type="button" style="font-size:10px" class="btn btn-info" value="Edit" id="{{ d.id }}"
-                        onclick="edit_save_name('{{ d.id }}')" data-toggle="modal" data-target="#exampleModal">
+                     data-toggle="modal" data-target="#exampleModal{{ d.id }}">
                 </td>
                 <td class="text-center" scope="row">
                     {% with tid=d.id %}
@@ -118,9 +125,9 @@
                 </td>
                 <td class="text-center">
                     {% if d.received == True %}
-                    <i class="fas fa-check-circle" data-toggle="tooltip" title="Received" style="color:green;font-size: 15px"></i>
+                    <i class="fas fa-check-circle" data-toggle="tooltip" title="Received" style="color:green;font-size: 20px"></i>
                     {% else %}
-                    <i class="fas fa-times-circle" data-toggle="tooltip" title="Not received yet" style="color:red;font-size: 15px"></i>
+                    <i class="fas fa-times-circle" data-toggle="tooltip" title="Not received yet" style="color:red;font-size: 20px"></i>
                     {% endif %}
                 </td>
                 <td class="text-center">
@@ -145,14 +152,16 @@
                 </td>
                 {% if d.damaged == False %}
                 <td class="text-center" >
-                    <i class="fas fa-check-circle"  style="color:green;font-size: 15px"></i>
+                    <i class="fas fa-check-circle"  style="color:green;font-size: 20px"></i>
                 </td>
                 {% else %}
                 <td class="text-center" >
-                    {% if d.allotted_to != None %}
-                    <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ d.previous_allotment|splitdamage }}" style="color:red;font-size: 15px"></i>
+                    {% if d.under_maintenance == True %}
+                    <i class="fas fa-tools" style="font-size:20px; color:blue" data-toggle="tootltip" title="Under Maintenance"></i>
                     {% else %}
-                    <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ d.previous_centers|splitdamage }}" style="color:red;font-size: 15px"></i>
+                    <span data-toggle="modal" data-target="#exampleModal">
+                        <i class="fas fa-times-circle" data-toggle="tooltip" title="{{ d.id|spitdamage }}" style="color:red;font-size: 20px"></i>
+                    </span>
                     {% endif %}
                 </td>
                 {%endif  %}
@@ -167,10 +176,34 @@
                     {% with tid=d.id center_id=center_name.id %}
                     <a href="{% url 'main:tablet_transfer' tid center_id %}">
                     {% endwith %}
-                    <input type="button" style="font-size:10px" class="btn btn-info" {% if d.allotted == True %} disabled {% endif %} value="Transfer">
+                    <input type="button" style="font-size:10px" class="btn btn-info" {% if d.under_maintenance == True %} disabled {% endif %} value="Transfer">
                     </a>
                 </td>
               </tr>
+              <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Tablet Repair</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">    
+                            <div class="row" style="margin-left:10px">Are you sure you want to make the tablet repair at current center?</div>
+                            <div class="row" style="margin-top:10px;margin-left: 10px">
+                                <input type="button" class="btn btn-secondary" data-dismiss="modal" value="No">
+                                {% with tid=d.id cid=center_name.id %}
+                                <a href="{% url 'main:repair' tid cid %}">
+                                {% endwith %}
+                                    <input type="button" class="btn btn-success" value="Yes" style="margin-left:10px">
+                                </a>    
+                            </div>
+                            
+                        </div>
+                      </div>
+                    </div>
+                  </div>
             {% endfor %}
             </tbody>
           </table>
@@ -178,13 +211,8 @@
 </div>
 
 <script>
-    function edit_save_name(id){
-        var btnname = document.getElementById(id);
-        var imname = "imei"+id;
-        var tabname = "tab"+id;
-        
-        var imfield = document.getElementById(imname);
-        var tabfield = document.getElementById(tabname);
+    function openmodal(){
+        $("#exampleModal").modal("show");
     }
 </script>
 

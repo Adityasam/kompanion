@@ -10,9 +10,9 @@ def splitdamage(string):
     spal=string.split(",")
     sspal=spal[-1].split("/")
     if len(sspal) > 6:
-        return sspal[7]
+        return sspal[8]
     else:
-        return sspal[5]
+        return sspal[7]
 
 @register.filter(name='tablet_history')
 @stringfilter
@@ -38,5 +38,22 @@ def get_name(string):
     name=nam.name
     return name
 
+@register.filter(name='spitdamage')
+@stringfilter
+def spitdamage(string):
+    from main.models import Database
+    db=Database.objects.get(id=string)
+    pal=db.previous_allotment
+    pc=db.previous_centers
 
-   
+    if pal != "":
+        spal=pal.split(",")
+        sspal=spal[-1].split("/")
+        if sspal[6] == "D":
+            return sspal[8]
+
+    if pc != "":
+        spal=pc.split(",")
+        sspal=spal[-1].split("/")
+        if sspal[5] == "D":
+            return sspal[7]

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load mathfilters%}
+{% load appfilters %}
+{% block content %}
+
+<div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif; margin-bottom:50px;font-size: 15px">
+    <div class="row" style="margin-top:10px">
+        <div class="col-sm-8">
+        <h4 style="font-weight:bold">Total Tablets: {{tablets.count }}</h4>
+        </div>
+        <div class="col-sm-4 text-right">
+            <form action="{% url 'main:query' %}" class="pull-right" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-8 pull-right">
+                        <input type="text" class="form-control" placeholder="Search..." name="query">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="submit" class="btn btn-info btn-block" value="Search">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-bordered" style="margin-top:10px">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="text-center">IMEI</th>
+                    <th scope="col" class="text-center">Brand</th>
+                    <th scope="col" class="text-center">Tablet ID</th>
+                    <th scope="col" class="text-center">Center</th>
+                    <th scope="col" class="text-center">Condition</th>
+                    <th scope="col" class="text-center">Allotted date</th>
+                    <th scope="col" class="text-center">Receive date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tablets %}
+                <tr>
+                    <td class="text-center">{{ t.imei }}</td>
+                    <td class="text-center">{{ t.brand }}</td>
+                    <td class="text-center">{{ t.tab_id }}</td>
+                    <td class="text-center">{{ t.current_center|get_name|title }}</td>
+                    <td class="text-center">
+                        {% if t.damaged == True %}
+                        <i class="fas fa-times-circle" style="color:red;font-size: 15px"></i>
+                        {% else %}
+                        <i class="fas fa-check-circle" style="color:green;font-size: 15px"></i>
+
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {{ t.allotted_date }} {% if t.allotted_time != None %} / ({{t.allotted_time}}) {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if t.received_date != None %}
+                        {{ t.received_date }} {% if t.received_time != None %} / ({{t.received_time}}) {% endif %}
+                        {% else %}
+                        Not yet received
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

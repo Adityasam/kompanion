@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load mathfilters%}
+{% load appfilters %}
 {% block content %}
 
 <div class="container" style="font-family:Georgia, 'Times New Roman', Times, serif">
@@ -9,21 +10,21 @@
             <h4 style="color:red; margin-top:20px">{{ message }}</h4>
         </div>
     {% endfor %}
-    <div class="row text-center label-info" style="color:royalblue;margin-top:50px;margin-bottom:0px">
+    <div class="row text-center label-info" style="color:royalblue;margin-top:50px;color:white">
             <!-- <div class="col-sm-2">
                 <label>Allottment</label>
             </div> -->
-            <div class="col-sm-3">
-                <label style="text-decoration:underline">IMEI Number</label>
+            <div class="col-sm-3" style="border-right:1px solid;background: rgb(34, 34, 34)">
+                <label>IMEI Number</label>
             </div>
-            <div class="col-sm-2">
-                <label style="text-decoration:underline">ID</label>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(34, 34, 34)">
+                <label>ID</label>
             </div>
-            <div class="col-sm-2">
-                <label style="text-decoration:underline">Date</label>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(34, 34, 34)">
+                <label>Date</label>
             </div>
-            <div class="col-sm-2">
-                <label style="text-decoration:underline">Center</label>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(34, 34, 34)">
+                <label>Center</label>
             </div>
         </div>
     
@@ -34,30 +35,36 @@
             <input type="text" class="form-control" name="allotment" id="allot" placeholder="Allottment">
         </div> -->
         <div class="col-sm-3">
-            <input type="text" name="im" placeholder="IMEI Number" class="form-control" style="width:100%" value="{{ tab_detail.imei }}">
+            <input type="text" name="im" placeholder="IMEI Number" class="form-control" value="{{ tab_detail.imei }}">
         </div>
         <div class="col-sm-2">
-            <input type="text" name="tid" placeholder="Tablet ID" class="form-control" style="width:100%" value="{{ tab_detail.tab_id }}">
+            <input type="text" name="tid" placeholder="Tablet ID" class="form-control" value="{{ tab_detail.tab_id }}">
         </div>
         <div class="col-sm-2">
-            <input type="date" name="date" id='dat' class="form-control" style="width:100%">
+            <input type="date" name="date" id='dat' class="form-control">
         </div>
         <div class="cl-sm-2">
-            <fieldset>
-                <select name="center" style="width:200px" class="form-control">
-                    {% for d in centers_name%}
-                        <option value = "{{ d.center_id }}">{{ d.name }}</option>
+                <select type="select" name="center" class="form-control">
+                    {% if tab_detail.damaged == True %}
+                        <option style="padding:20px" value = "5">Delhi</option>
+                    {% else %}
+
+                    {% for d in centers_name %}
+                    {% if d.name != center_id|get_name %}
+                        <option style="padding:20px" value = "{{ d.center_id }}">{{ d.name }}</option>
+                    {% endif %}
                     {% endfor %}
+
+                    {% endif %}
                 </select>
-            </fieldset>
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-0">
             <input type="hidden" name="ids" value="{{ tab_detail.id }}">
         </div>
         <div class="col-sm-2">
-            <input type="submit" class="form-control btn btn-info" value="Send" style="width:100%">
+            <input type="submit" class="form-control btn btn-info" value="Send">
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-0">
             <input type="hidden" name="cid" value="{{ center_id }}">
         </div>
         

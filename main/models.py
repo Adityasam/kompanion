@@ -8,17 +8,22 @@ class Database(models.Model):
     tab_id=models.CharField(max_length=10 , default=None, null=True)
     current_center=models.PositiveIntegerField(default=None, null=True)
     allotted_date=models.DateField(default=datetime.date.today, null=True, blank=True)
+    allotted_time=models.CharField(max_length=10, default=None, null=True, blank=True)
     received_date=models.DateField(default=None, null=True, blank=True)
+    received_time=models.CharField(max_length=10, default=None, null=True, blank=True)
     previous_centers=models.TextField(default=None, null=True, blank=True)
     received=models.BooleanField(default=False)
     allotted_to=models.CharField(max_length=100, default=None, null=True, blank=True)
     project=models.CharField(max_length=100, default=None, null=True, blank=True)
     start_date=models.DateField(default=None, null=True, blank=True)
+    start_time=models.CharField(max_length=10, default=None, null=True, blank=True)
     end_date=models.DateField(default=None, null=True, blank=True)
+    end_time=models.CharField(max_length=10, default=None, null=True, blank=True)
     damaged=models.BooleanField(default=False)
-    completed=models.BooleanField(default=False)
+    under_maintenance=models.BooleanField(default=False)
     allotted=models.BooleanField(default=False)
     previous_allotment=models.TextField(default=None, null=True, blank=True)
+    damage_record=models.TextField(default=None, null=True, blank=True)
 
     class Meta:
         ordering=('imei',)
@@ -36,3 +41,6 @@ class Center(models.Model):
 
     def get_absolute_url(self):
         return reverse('main:detail', args=[self.center_id])
+
+class Maintenance(models.Model):
+    under_maintenance=models.BooleanField(default=False)

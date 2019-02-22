@@ -16,16 +16,26 @@
     </div>
     </div>
     {% else %}
+    <form action="{% url 'main:mark_received' %}" method="POST">
+      {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-10"></div>
+            <div class="col-sm-2">
+            <input type="submit" class="btn btn-success" value="Mark Received">
+          </div>
+          </div>
             <table class="table table-bordered" id="table" style="margin-top:30px">
                     <thead class="thead-dark">
                       <tr>
                         <th scope="col">IMEI</th>
-                        <th scope="col">Tablet_id</th>
+                        <th scope="col">Tablet ID</th>
                         <th scope="col">Date Allotted</th>
-                        <th scope="col">Mark</th>
+                        <th scope="col"><input type="checkbox" id="allcheck" onclick="checkall()" style="margin-right:10px">
+                          Mark</th>
                       </tr>
                     </thead>
                     <tbody>
+
                     {% for d in tablets %}
                       <tr>
                     
@@ -35,18 +45,30 @@
                         </td>
                         <td>{{ d.allotted_date }}</td>
                         <td>
-                            {% with tid=d.id %}
-                            <a href="{% url 'main:mark_received' tid %}">
-                            {% endwith %}
-                            <button class="btn btn-info">Mark Received</button>
-                            </a>
+                          <input type="checkbox" id="check{{ forloop.counter }}" name="check{{ forloop.counter }}" value="{{ d.id }}">
+                          <input type="hidden" id="counting" name="counting" value="{{ tablets.count }}">
                         </td>
+                
                         
                       </tr>
                       
                     {% endfor %}
                     </tbody>
                   </table>
+                  
+                </form>
                   {% endif %}
 </div>
+
+<script>
+function checkall(){
+  counts=document.getElementById("counting").value;
+  var i;
+  for(i=1;i<=counts;i++){
+    var ac=document.getElementById("allcheck").checked;
+    var cname="check"+i;
+    var c=document.getElementById(cname).checked = ac;
+  }
+}
+</script>
 {% endblock %}

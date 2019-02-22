@@ -9,6 +9,14 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'tabletKadence@gmail.com'
+EMAIL_HOST_PASSWORD = 'kadence2019'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+
 
 import os
 
@@ -25,7 +33,7 @@ SECRET_KEY = 'o=sp=t(f=y&*$%)s(^orv-)*ud)=gv*ne0=wgz1&w)n^+$t52#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.43.180']
+ALLOWED_HOSTS = ['192.168.43.180', '127.0.0.1']
 
 
 # Application definition
@@ -109,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

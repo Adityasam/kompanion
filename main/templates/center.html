@@ -12,6 +12,9 @@
         <div class="row">
             <h5>To be received: {{ tobe_received_tab.count }}</h5>
         </div>
+        <div class="row">
+            <h5>Damaged Tablets: {{ damaged.count }}</h5>
+        </div>
         </div>
         <div class="col-sm-4 text-center">
         <h2 style="text-decoration:underline;font-weight: bold">
@@ -25,12 +28,6 @@
             </a>
         </div>
     </div>
-
-    <!-- <div class="row">
-        {% for d in dat %}
-            {{ d.imei }}
-        {% endfor %}
-    </div> -->
     {% for message in messages %}
         <div class="row">
             <h4 style="color:red; margin-top:20px;margin-left: 15px">{{ message }}</h4>
@@ -39,20 +36,20 @@
 
     <div class="row text-center label-info" style="color:royalblue;margin-bottom:0px
     ;color: white;margin-left:0px;margin-right: 0px;font-weight: bold">
-            <!-- <div class="col-sm-2">
-                <label>Allottment</label>
-            </div> -->
-            <div class="col-sm-3" style="border-right:1px solid;background: rgb(29, 29, 29)">
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
                 <label style="padding:5px">IMEI Number</label>
             </div>
             <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
                 <label style="padding:5px">Brand</label>
             </div>
-            <div class="col-sm-3" style="border-right:1px solid;background: rgb(29, 29, 29)">
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
                 <label style="padding:5px">Tablet ID</label>
             </div>
             <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
                 <label style="padding:5px">Date</label>
+            </div>
+            <div class="col-sm-2" style="border-right:1px solid;background: rgb(29, 29, 29)">
+                <label style="padding:5px">Time</label>
             </div>
         </div>
 
@@ -62,22 +59,25 @@
                 <!-- <div class="col-sm-2">
                     <input type="text" class="form-control" name="allotment" id="allot" placeholder="Allottment">
                 </div> -->
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <input type="text" name="im1" placeholder="IMEI Number" class="form-control">
                 </div>
                 <div class="col-sm-2">
                     <input type="text" name="brand1" placeholder="Brand" class="form-control">
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <input type="text" name="tid1" placeholder="Tablet ID" class="form-control">
                 </div>
                 <div class="col-sm-2">
                     <input type="date" id="dat" name="date" class="form-control">
                 </div>
                 <div class="col-sm-2">
-                    <input type="submit" class="form-control btn btn-info" value="Submit">
+                    <input type="text" name="time" id="time-input" class="form-control">
                 </div>
                 <div class="col-sm-2">
+                    <input type="submit" class="form-control btn btn-info" value="Submit">
+                </div>
+                <div class="col-sm-0">
                     <input type="hidden" name="count" id="countid" value="1">
                     <input type="hidden" name="center_id" value="{{ center_name.id }}">
                 </div>
@@ -99,7 +99,7 @@ x.setAttribute("class", "row");
 x.style.marginTop="10px";
 
 var imc=document.createElement("div");
-imc.setAttribute("class", "col-sm-3");
+imc.setAttribute("class", "col-sm-2");
 
 var im=document.createElement("INPUT");
 im.setAttribute("type", "text");
@@ -121,7 +121,7 @@ brname="brand"+clickcount.toString();
 br.setAttribute("name", brname);
 
 var idc=document.createElement("div");
-idc.setAttribute("class", "col-sm-3");
+idc.setAttribute("class", "col-sm-2");
 
 var id=document.createElement("INPUT");
 id.setAttribute("type", "text");
@@ -148,8 +148,61 @@ function dateset(){
 var myDate = document.getElementById('dat');
 var today = new Date();
 myDate.value = today.toISOString().substr(0, 10);
+
+var mytime=document.getElementById('time-input');
+var hours=today.getHours();
+var minutes=today.getMinutes();
+
+var min="";
+var h="";
+var ampm="";
+
+if(hours > 12){
+    h=hours - 12;
+    ampm="PM";
+}
+else{
+    h=hours;
+    ampm="AM";
+}
+
+var hh=""
+if(h < 10){
+    hh="0"+h;
+}
+else{
+    hh=h;
+}
+if(minutes < 10){
+    min="0"+minutes;
+}
+else{
+    min=minutes;
+}
+var tim=hh+":"+min+ampm;
+
+mytime.value=tim;
+
 }
 window.onload=dateset();
 </script>
+
+<script type="text/javascript">
+    $('.clockpicker').clockpicker()
+        .find('input').change(function(){
+            // TODO: time changed
+            console.log(this.value);
+        });
+    $('#demo-input').clockpicker({
+        autoclose: true
+    });
+    
+    if (something) {
+        // Manual operations (after clockpicker is initialized).
+        $('#demo-input').clockpicker('show') // Or hide, remove ...
+                .clockpicker('toggleView', 'minutes');
+    }
+    </script>
+
 {% endblock %}
 
